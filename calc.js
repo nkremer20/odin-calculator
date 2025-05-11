@@ -27,14 +27,16 @@ opButtons.forEach(button => {
         }
         
         // Handles clearing display
-
+        if (button.textContent === 'AC') {
+            display.textContent = '0';
+        }
 
         // Handles addition input
 
 
         // Handles substraction input
 
-        
+
         // Handles multiplication input
 
 
