@@ -46,21 +46,22 @@ opButtons.forEach(button => {
         if (button.textContent === 'AC') {
             calcList = [];
             display.textContent = 0;
+        } else if (button.textContent === '=') {
+            if (calcList.length === 3) {
+                display.textContent = mathOperation(calcList);
+                
+            };
+        } else {
+            // Handles math operation input
+            if (calcList.length === 1 || calcList.length === 2) {
+                calcList[1] = button.textContent;
+            } else if (calcList.length === 3) {
+                display.textContent = mathOperation(calcList);
+                calcList = [];
+                calcList[0] = display.textContent;
+                calcList[1] = button.textContent;
+            };
         };
-
-        // Handles addition input
-
-
-        // Handles subtraction input
-
-
-        // Handles multiplication input
-
-
-        // Handles division input
-
-
-        // Handles equals inputs
 
     })
 })
