@@ -8,45 +8,63 @@ let calcList = [];
 function mathOperation(calcList) {
     switch(calcList[1]) {
             case '+':
-                result = parseInt(calcList[0]) + parseInt(calcList[2]);
+                result = parseFloat(calcList[0]) + parseFloat(calcList[2]);
                 return result;
             case '-':
-                result = parseInt(calcList[0]) - parseInt(calcList[2])
+                result = parseFloat(calcList[0]) - parseFloat(calcList[2])
                 return result;
             case 'x':
-                result = parseInt(calcList[0]) * parseInt(calcList[2]);
+                result = parseFloat(calcList[0]) * parseFloat(calcList[2]);
                 return result;
             case '÷':
                 if (calcList[2] === '0'){
                     result = 'ERROR'
                 } else {
-                    result = parseInt(calcList[0]) / parseInt(calcList[2]);
+                    result = parseFloat(calcList[0]) / parseFloat(calcList[2]);
                 }
-                return result;
+                // return result;
+                return +(Math.round(result + "e+2")  + "e-2");
+    }
+};
+
+function addDecimal(button, num) {
+    if (button.textContent === '.' && num.includes('.')) {
+        return false
+    } else {
+        return true
     }
 };
 
 numButtons.forEach(button => {
     button.addEventListener('click', () => {
-        if (calcList.length === 0) {
-            calcList[0] = button.textContent;
-            display.textContent = calcList[0];
-        } else if (calcList.length === 1) {
-            if (calcList[0] === '=') {
-                calcList[0] = button.textContent;
-                display.textContent = calcList[0];
-            } else {
-                calcList[0] = calcList[0] + button.textContent;
-                display.textContent = calcList[0];
+        if (addDecimal(button, display.textContent)){
+            if (calcList.length === 0) {
+                if (button.textContent === '.') {
+                    calcList[0] = '0.';
+                    display.textContent = calcList[0];
+                } else {
+                    calcList[0] = button.textContent;
+                    display.textContent = calcList[0];
+                };
+                
+            } else if (calcList.length === 1) {
+                if (calcList[0] === '=') {
+                    calcList[0] = button.textContent;
+                    display.textContent = calcList[0];
+                } else {
+                    calcList[0] = calcList[0] + button.textContent;
+                    display.textContent = calcList[0];
+                };
+                
+            } else if (calcList.length === 2) {
+                calcList[2] = button.textContent;
+                display.textContent = calcList[2];
+            } else if (calcList.length === 3) {
+                calcList[2] = calcList[2] + button.textContent;
+                display.textContent = calcList[2];
             }
-            
-        } else if (calcList.length === 2) {
-            calcList[2] = button.textContent;
-            display.textContent = calcList[2];
-        } else if (calcList.length === 3) {
-            calcList[2] = calcList[2] + button.textContent;
-            display.textContent = calcList[2];
         }
+
     })
 })
 
