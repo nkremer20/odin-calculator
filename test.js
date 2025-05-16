@@ -28,7 +28,7 @@ function mathOperation(calcList) {
 };
 
 function addDecimal(button, num) {
-    if (button.textContent === '.' && num.includes('.')) {
+    if (button === '.' && num.includes('.')) {
         return false
     } else {
         return true
@@ -37,7 +37,7 @@ function addDecimal(button, num) {
 
 numButtons.forEach(button => {
     button.addEventListener('click', () => {
-        if (addDecimal(button, display.textContent)){
+        if (addDecimal(button.textContent, display.textContent)){
             if (calcList.length === 0) {
                 if (button.textContent === '.') {
                     calcList[0] = '0.';
@@ -99,3 +99,69 @@ opButtons.forEach(button => {
         }
     })
 });
+
+// Keyboard input logic
+const numKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
+const opKeys = ['+', '-', '*', '/', '=', '.', 'Enter', 'Clear']
+
+document.addEventListener('keydown', (event) => {
+    if (numKeys.includes(event.key)) {
+        if (addDecimal(event.key, display.textContent)){
+            if (calcList.length === 0) {
+                if (event.key === '.') {
+                    calcList[0] = '0.';
+                    display.textContent = calcList[0];
+                } else {
+                    calcList[0] = event.key;
+                    display.textContent = calcList[0];
+                };
+                
+            } else if (calcList.length === 1) {
+                if (calcList[0] === '=') {
+                    calcList[0] = event.key;
+                    display.textContent = calcList[0];
+                } else {
+                    calcList[0] = calcList[0] + event.key;
+                    display.textContent = calcList[0];
+                };
+                
+            } else if (calcList.length === 2) {
+                calcList[2] = event.key;
+                display.textContent = calcList[2];
+            } else if (calcList.length === 3) {
+                calcList[2] = calcList[2] + event.key;
+                display.textContent = calcList[2];
+            }
+        }
+    }
+    
+    if (opKeys.includes(event.key)) {
+        // Handles clearing the display
+        if (button.textContent === 'AC') {
+            calcList = [];
+            display.textContent = 0;
+        } else if (event.key === '=' || event.key === 'Enter') {
+            if (calcList.length === 3) {
+                display.textContent = mathOperation(calcList);
+                calcList = ['='];
+            }
+        } else {
+            // Handles math operation input
+            if (calcList.length === 1 || calcList.length === 2) {
+                if (calcList[0] === '=') {
+                    calcList[0] = display.textContent;
+                }
+                calcList[1] = button.textContent;
+            } else if (calcList.length === 3) {
+                display.textContent = mathOperation(calcList);
+                calcList = [];
+                calcList[0] = display.textContent;
+                calcList[1] = button.textContent;
+            }
+        }
+
+        if (display.textContent === 'ERROR') {
+            calcList = [];
+        }
+    }
+})
