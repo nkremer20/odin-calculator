@@ -82,6 +82,9 @@ opButtons.forEach(button => {
         } else {
             // Handles math operation input
             if (calcList.length === 1 || calcList.length === 2) {
+                if (calcList[0] === '=') {
+                    calcList[0] = display.textContent;
+                }
                 calcList[1] = button.textContent;
             } else if (calcList.length === 3) {
                 display.textContent = mathOperation(calcList);
