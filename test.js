@@ -32,8 +32,14 @@ numButtons.forEach(button => {
             calcList[0] = button.textContent;
             display.textContent = calcList[0];
         } else if (calcList.length === 1) {
-            calcList[0] = calcList[0] + button.textContent;
-            display.textContent = calcList[0];
+            if (calcList[0] === '=') {
+                calcList[0] = button.textContent;
+                display.textContent = calcList[0];
+            } else {
+                calcList[0] = calcList[0] + button.textContent;
+                display.textContent = calcList[0];
+            }
+            
         } else if (calcList.length === 2) {
             calcList[2] = button.textContent;
             display.textContent = calcList[2];
@@ -53,7 +59,7 @@ opButtons.forEach(button => {
         } else if (button.textContent === '=') {
             if (calcList.length === 3) {
                 display.textContent = mathOperation(calcList);
-                
+                calcList = ['='];
             }
         } else {
             // Handles math operation input
