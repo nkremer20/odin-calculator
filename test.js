@@ -17,7 +17,11 @@ function mathOperation(calcList) {
                 result = parseInt(calcList[0]) * parseInt(calcList[2]);
                 return result;
             case '÷':
-                result = parseInt(calcList[0]) / parseInt(calcList[2]);
+                if (calcList[2] === '0'){
+                    result = 'ERROR'
+                } else {
+                    result = parseInt(calcList[0]) / parseInt(calcList[2]);
+                }
                 return result;
     }
 };
@@ -50,7 +54,7 @@ opButtons.forEach(button => {
             if (calcList.length === 3) {
                 display.textContent = mathOperation(calcList);
                 
-            };
+            }
         } else {
             // Handles math operation input
             if (calcList.length === 1 || calcList.length === 2) {
@@ -60,8 +64,11 @@ opButtons.forEach(button => {
                 calcList = [];
                 calcList[0] = display.textContent;
                 calcList[1] = button.textContent;
-            };
-        };
+            }
+        }
 
+        if (display.textContent === 'ERROR') {
+            calcList = [];
+        }
     })
-})
+});
