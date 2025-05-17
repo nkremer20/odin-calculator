@@ -3,119 +3,167 @@ const numButtons = document.querySelectorAll('#num');
 const opButtons = document.querySelectorAll('#op');
 const display = document.querySelector('.display');
 
-let result = '0';
-let op;
+let calcList = [];
 
-function mathOperation(num1, num2, op) {
-    switch (op) {
-        case '+':
-            result = parseInt(num1) + parseInt(num2);
-            return result;
-        case '-':
-            result = num1 - num2;
-            return result;
-        case 'x':
-            result = num1 * num2;
-            return result;
-        case '÷':
-            result = num1/num2;
-            return result;
-    };
+function mathOperation(calcList) {
+    switch(calcList[1]) {
+            case '+':
+                result = parseFloat(calcList[0]) + parseFloat(calcList[2]);
+                return result;
+            case '-':
+                result = parseFloat(calcList[0]) - parseFloat(calcList[2])
+                return result;
+            case '*':
+            case 'x':
+                result = parseFloat(calcList[0]) * parseFloat(calcList[2]);
+                return result;
+            case '/':
+            case '÷':
+                if (calcList[2] === '0'){
+                    result = 'ERROR'
+                } else {
+                    result = parseFloat(calcList[0]) / parseFloat(calcList[2]);
+                }
+                // return result;
+                return +(Math.round(result + "e+2")  + "e-2");
+    }
+};
+
+function addDecimal(button, num) {
+    if (button === '.' && num.includes('.')) {
+        return false
+    } else {
+        return true
+    }
 };
 
 numButtons.forEach(button => {
     button.addEventListener('click', () => {
-        console.log(button.textContent);
-        if (display.textContent === '0'){
-            display.textContent = button.textContent;
-        } else if (op !== undefined){
-            if (display.textContent === result) {
-                display.textContent = button.textContent;
-            } else {
-                display.textContent = display.textContent + button.textContent;
+        if (addDecimal(button.textContent, display.textContent)){
+            if (calcList.length === 0) {
+                if (button.textContent === '.') {
+                    calcList[0] = '0.';
+                    display.textContent = calcList[0];
+                } else {
+                    calcList[0] = button.textContent;
+                    display.textContent = calcList[0];
+                };
+                
+            } else if (calcList.length === 1) {
+                if (calcList[0] === '=') {
+                    calcList[0] = button.textContent;
+                    display.textContent = calcList[0];
+                } else {
+                    calcList[0] = calcList[0] + button.textContent;
+                    display.textContent = calcList[0];
+                };
+                
+            } else if (calcList.length === 2) {
+                calcList[2] = button.textContent;
+                display.textContent = calcList[2];
+            } else if (calcList.length === 3) {
+                calcList[2] = calcList[2] + button.textContent;
+                display.textContent = calcList[2];
             }
-        } else {
-            display.textContent = display.textContent + button.textContent;
-        };
-    });
-});
+        }
+
+    })
+})
 
 opButtons.forEach(button => {
     button.addEventListener('click', () => {
-        // Handles deleting last entered digit from display
-        if( button.getElementsByTagName('img').length > 0) {
-            display.textContent = display.textContent.slice(0, -1);
-            if (display.textContent.length === 0) {
-                display.textContent = '0'
-            };
-        };
-        
-        // Handles clearing display
+        // Handles clearing the display
         if (button.textContent === 'AC') {
-            result = '0'
-            op = undefined;
-            display.textContent = result;
-        };
-
-        // Handles addition input
-        if (button.textContent === "+") {
-            if (op === undefined) {
-                result = display.textContent;
-                op = '+';
-            } else {
-                console.log(result);
-                display.textContent = mathOperation(result, display.textContent, op);
-                op = undefined;
+            calcList = [];
+            display.textContent = 0;
+        } else if (button.textContent === '=') {
+            if (calcList.length === 3) {
+                display.textContent = mathOperation(calcList);
+                calcList = ['='];
+            }
+        } else {
+            // Handles math operation input
+            if (calcList.length === 1 || calcList.length === 2) {
+                if (calcList[0] === '=') {
+                    calcList[0] = display.textContent;
+                }
+                calcList[1] = button.textContent;
+            } else if (calcList.length === 3) {
+                display.textContent = mathOperation(calcList);
+                calcList = [];
+                calcList[0] = display.textContent;
+                calcList[1] = button.textContent;
             }
         }
 
-        // Handles substraction input
-        if (button.textContent === "-") {
-            if (op === undefined) {
-                result = display.textContent;
-                op = '-';
-            } else {
-                console.log(result);
-                display.textContent = mathOperation(result, display.textContent, op);
-                op = undefined;
-            }
+        if (display.textContent === 'ERROR') {
+            calcList = [];
         }
-
-        // Handles multiplication input
-        if (button.textContent === "x") {
-            if (op === undefined) {
-                result = display.textContent;
-                op = 'x';
-            } else {
-                console.log(result);
-                display.textContent = mathOperation(result, display.textContent, op);
-                op = undefined;
-            }
-        }
-
-        // Handles division input
-        if (button.textContent === "÷") {
-            if (op === undefined) {
-                result = display.textContent;
-                op = '÷';
-            } else {
-                console.log(result);
-                display.textContent = mathOperation(result, display.textContent, op);
-                op = undefined;
-            }
-        }
-
-        // Handles equals input
-        if (button.textContent === '=') {
-            if (op === undefined) {
-                // do nothing
-            } else {
-                display.textContent = mathOperation(result, display.textContent, op);
-                op = undefined;
-            }
-        }
-
-
     })
-}
-)
+});
+
+// Keyboard input logic
+const numKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
+const opKeys = ['+', '-', '*', '/', '=', '.', 'Enter', 'Clear', 'Backspace']
+
+document.addEventListener('keydown', (event) => {
+    if (numKeys.includes(event.key)) {
+        if (addDecimal(event.key, display.textContent)){
+            if (calcList.length === 0) {
+                if (event.key === '.') {
+                    calcList[0] = '0.';
+                    display.textContent = calcList[0];
+                } else {
+                    calcList[0] = event.key;
+                    display.textContent = calcList[0];
+                };
+                
+            } else if (calcList.length === 1) {
+                if (calcList[0] === '=') {
+                    calcList[0] = event.key;
+                    display.textContent = calcList[0];
+                } else {
+                    calcList[0] = calcList[0] + event.key;
+                    display.textContent = calcList[0];
+                };
+                
+            } else if (calcList.length === 2) {
+                calcList[2] = event.key;
+                display.textContent = calcList[2];
+            } else if (calcList.length === 3) {
+                calcList[2] = calcList[2] + event.key;
+                display.textContent = calcList[2];
+            }
+        }
+    }
+    
+    if (opKeys.includes(event.key)) {
+        // Handles clearing the display
+        if (event.key === 'Clear' || event.key === 'Backspace') {
+            calcList = [];
+            display.textContent = 0;
+        } else if (event.key === '=' || event.key === 'Enter') {
+            if (calcList.length === 3) {
+                display.textContent = mathOperation(calcList);
+                calcList = ['='];
+            }
+        } else {
+            // Handles math operation input
+            if (calcList.length === 1 || calcList.length === 2) {
+                if (calcList[0] === '=') {
+                    calcList[0] = display.textContent;
+                }
+                calcList[1] = event.key;
+            } else if (calcList.length === 3) {
+                display.textContent = mathOperation(calcList);
+                calcList = [];
+                calcList[0] = display.textContent;
+                calcList[1] = event.key;
+            }
+        }
+
+        if (display.textContent === 'ERROR') {
+            calcList = [];
+        }
+    }
+})
